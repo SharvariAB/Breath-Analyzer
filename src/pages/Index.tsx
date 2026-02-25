@@ -16,7 +16,7 @@ const Index = () => {
   const [city, setCity] = useState("Delhi");
   const [liveData, setLiveData] = useState<any>(null);
 
-const API_KEY = "ce649789777e4d58b17653a30bf16a9d";
+const API_KEY = import.meta.env.VITE_WEATHER_KEY;
 
 const cityCoordinates: any = {
   Delhi: { lat: 28.6139, lon: 77.2090 },
