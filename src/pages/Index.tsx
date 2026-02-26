@@ -16,7 +16,7 @@ const Index = () => {
   const [city, setCity] = useState("Delhi");
   const [liveData, setLiveData] = useState<any>(null);
 
-const API_KEY = import.meta.env.VITE_WEATHER_KEY;
+const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
 const cityCoordinates: any = {
   Delhi: { lat: 28.6139, lon: 77.2090 },
@@ -29,6 +29,7 @@ useEffect(() => {
     const coords = cityCoordinates[city];
     if (!coords) return;
 
+    
     const response = await fetch(
       `https://api.openweathermap.org/data/2.5/air_pollution?lat=${coords.lat}&lon=${coords.lon}&appid=${API_KEY}`
     );
@@ -44,17 +45,30 @@ useEffect(() => {
 }, [city]);
 
   const data = useMemo(() => generateCityData(city, 30), [city]);
+
+  const livePollution = liveData?.list?.[0];
+
   const latest = {
-  ...data[data.length - 1],
-  aqi: liveData
-  ? Math.round(liveData.list[0].components.pm2_5 * 1.8)
-  : data[data.length - 1].aqi,
-  pm25: liveData ? liveData.list[0].components.pm2_5 : data[data.length - 1].pm25,
-  pm10: liveData ? liveData.list[0].components.pm10 : data[data.length - 1].pm10,
-  no2: liveData ? liveData.list[0].components.no2 : data[data.length - 1].no2,
-  co: liveData ? liveData.list[0].components.co : data[data.length - 1].co,
-  so2: liveData ? liveData.list[0].components.so2 : data[data.length - 1].so2,
-};
+    ...data[data.length - 1],
+    aqi: livePollution
+      ? Math.round(livePollution.components.pm2_5 * 1.8)
+      : data[data.length - 1].aqi,
+    pm25: livePollution
+      ? livePollution.components.pm2_5
+      : data[data.length - 1].pm25,
+    pm10: livePollution
+      ? livePollution.components.pm10
+      : data[data.length - 1].pm10,
+    no2: livePollution
+      ? livePollution.components.no2
+      : data[data.length - 1].no2,
+    co: livePollution
+      ? livePollution.components.co
+      : data[data.length - 1].co,
+    so2: livePollution
+      ? livePollution.components.so2
+      : data[data.length - 1].so2,
+  };
   const mlMetrics = useMemo(() => runPrediction(data), [data]);
   const predictedAQI = mlMetrics.randomForest.predictedAQI;
 
